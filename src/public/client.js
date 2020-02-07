@@ -16,6 +16,41 @@ const render = async (root, state) => {
   root.innerHTML = App(state);
 };
 
+const Jumbotron = () => {
+  return `<div class="jumbotron jumbotron-fluid">
+        <div class="container">
+            <h1 class="display-4 text-center">Mars Rover Photos</h1>
+            <p class="lead text-center">Select rover:</p>
+            <div class="form-group">
+            <select class="form-control" id="exampleFormControlSelect1">
+              <option>1</option>
+              <option>2</option>
+              <option>3</option>
+              <option>4</option>
+              <option>5</option>
+            </select>
+          </div>
+        </div>
+    </div>`;
+};
+
+const Navbar = () => {
+  return `<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" href="#">APOD<span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#images">Mars Rover Photos</a>
+        </li>
+      </ul>
+    </div>
+  </nav>`;
+};
 const Photos = data => {
   return `<div class="container py-5">
       <div class="card-columns">
@@ -36,6 +71,7 @@ const Photos = data => {
 const App = state => {
   let { rovers, apod } = state;
   return `
+        ${Navbar()}
         <header></header>
         <main>
             ${Greeting(store.user.name)}
@@ -53,6 +89,7 @@ const App = state => {
                 ${ImageOfTheDay(apod)}
             </section>
             <section id="images">
+            ${Jumbotron()}
             ${Photos(rovers)}
             </section>
 
