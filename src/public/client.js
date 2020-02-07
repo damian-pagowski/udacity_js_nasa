@@ -46,6 +46,10 @@ const App = (state) => {
 // listening for load event because page should load before any JS is called
 window.addEventListener('load', () => {
     render(root, store)
+    console.log("--fetching data from api")
+    fetch(`http://localhost:3000/rovers/curiosity`)
+        .then(res => res.json())
+        .then(data => console.log(data))
 })
 
 // ------------------------------------------------------  COMPONENTS
