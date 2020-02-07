@@ -22,17 +22,21 @@ footer {
 
 /* -------------------  TABLET  --------------------- */
 @media (min-width: 768px) {
-  /* use mobile */
+  .card-columns {
+    column-count: 2;
+  }
 }
 
 /* -------------------  DESKTOP  -------------------- */
 
 @media (min-width: 1224px) {
-  /* use mobile */
-}
-
+  .card-columns {
+    column-count: 6 ;
+  }
 /* -------------------  LARGE SCREENS  -------------- */
 
 @media (min-width: 1824px) {
-  /* use mobile */
+  .card-columns {
+    column-count: 8;
+  }
 }
