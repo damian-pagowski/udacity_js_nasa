@@ -1,7 +1,9 @@
 let store = {
   user: { name: "Student" },
   apod: "",
-  rovers: {}, //[{'Curiosity':{}}, {'Opportunity':{}}, 'Spirit'],
+  rovers: ["Curiosity", "Opportunity", "Spirit"],
+  selectedRover: null,
+  photoData: {},
 };
 
 // add our markup to the page
@@ -48,23 +50,29 @@ const Navbar = () => {
           <a class="nav-link" href="#images">Mars Rover Photos</a>
         </li>
       </ul>
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+            ${Greeting(store.user.name)}
+        </li>
+      </ul>
     </div>
   </nav>`;
 };
 const Photos = data => {
+  const cards = data.map(each => Card(each)).join("");
   return `<div class="container py-5">
       <div class="card-columns">
-          ${data.map(
-            each =>
-              `<div class="card">
-                  <img src="${each.img_src}" class="card-img-top img-fluid" alt="${each.earth_date}">
-                  <div class="card-body">
-                      <p class="card-text">${each.earth_date}</p>
-              </div>
-          </div>`
-          )}
+         ${cards}
       </div>
   </div>`;
+};
+
+const Card = data => {
+  return `<div class="card">
+            <img src="${data.img_src}" class="card-img-top img-fluid">
+            <div class="card-body">
+            </div>
+        </div>`;
 };
 
 // create content
@@ -74,10 +82,9 @@ const App = state => {
         ${Navbar()}
         <header></header>
         <main>
-            ${Greeting(store.user.name)}
+           
             <section>
-                <h3>Put things on the page!</h3>
-                <p>Here is an example section.</p>
+                <h3 class="text-center my-4">Astronomy Picture of the Day</h3>
                 <p>
                     One of the most popular websites at NASA is the Astronomy Picture of the Day. In fact, this website is one of
                     the most popular websites across all federal agencies. It has the popular appeal of a Justin Bieber video.
@@ -116,12 +123,12 @@ window.addEventListener("load", () => {
 const Greeting = name => {
   if (name) {
     return `
-            <h1>Welcome, ${name}!</h1>
+            Welcome, ${name}!
         `;
   }
 
   return `
-        <h1>Hello!</h1>
+        Hello!
     `;
 };
 
