@@ -19,40 +19,35 @@ const render = async (root, state) => {
   root.innerHTML = App(state);
 };
 
-const Jumbotron = (options, details) => {
+const Jumbotron = (roverSelect, roverDetails) => {
   return `<div class="jumbotron jumbotron-fluid">
         <div class="container">
             <h1 class="display-4 text-center">Mars Rover Photos</h1>
             <p class="lead text-center">Select rover:</p>
             <div class="form-group">
-            <select class="form-control" id="rover-select" onchange="handleSelectingRover()">
-${options
-  .map(
-    op =>
-      `<option value="${op.toLowerCase()}" ${
-        store.selectedRover == op.toLowerCase() ? " selected" : ""
-      }>${op}</option>`
-  )
-  .join("")}
-            </select>
+ ${roverSelect}
           </div>
         </div>
         <div class="form-group">
-  </div>
-  <div class="container">
-  <h5 class="text-center">Rover Details</h5>
-  <p>Name: ${details.name}</p>
-  <p>Launch Date: ${details.launch_date}</p>
-  <p>Landing Date: ${details.landing_date}</p>
-  <p>Status: ${details.status}</p>
-  <p>Last Photo Date: ${details.max_date}</p>
-  </div>
-
-  
+ ${roverDetails}
     </div>`;
 
   // The launch date, landing date, name and status along with any other information about the rover.
 };
+
+const roverSelect = options => {
+  return `           <select class="form-control" id="rover-select" onchange="handleSelectingRover()">
+    ${options
+      .map(
+        op =>
+          `<option value="${op.toLowerCase()}" ${
+            store.selectedRover == op.toLowerCase() ? " selected" : ""
+          }>${op}</option>`
+      )
+      .join("")}
+                </select>`;
+};
+
 function handleSelectingRover() {
   const rover = document.getElementById("rover-select").value;
   updateStore(store, { selectedRover: rover });
@@ -80,6 +75,18 @@ const Navbar = () => {
       </ul>
     </div>
   </nav>`;
+};
+
+const RoverDetails = details => {
+  return ` </div>
+    <div class="container">
+    <h5 class="text-center">Rover Details</h5>
+    <p>Name: ${details.name}</p>
+    <p>Launch Date: ${details.launch_date}</p>
+    <p>Landing Date: ${details.landing_date}</p>
+    <p>Status: ${details.status}</p>
+    <p>Last Photo Date: ${details.max_date}</p>
+    </div>`;
 };
 const Photos = data => {
   const cards = data.map(each => Card(each)).join("");
@@ -119,7 +126,7 @@ const App = state => {
                 ${ImageOfTheDay(apod)}
             </section>
             <section id="images">
-            ${Jumbotron(rovers, roverDetails)}
+            ${Jumbotron(roverSelect(rovers), RoverDetails(roverDetails))}
             ${Photos(photoData)}
             </section>
 
