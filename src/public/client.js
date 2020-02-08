@@ -4,6 +4,7 @@ let store = {
   rovers: ["Curiosity", "Opportunity", "Spirit"],
   selectedRover: "Curiosity",
   photoData: {},
+  roverDetails: {},
 };
 
 // add our markup to the page
@@ -18,7 +19,7 @@ const render = async (root, state) => {
   root.innerHTML = App(state);
 };
 
-const Jumbotron = options => {
+const Jumbotron = (options, details) => {
   return `<div class="jumbotron jumbotron-fluid">
         <div class="container">
             <h1 class="display-4 text-center">Mars Rover Photos</h1>
@@ -36,7 +37,21 @@ ${options
             </select>
           </div>
         </div>
+        <div class="form-group">
+  </div>
+  <div class="container">
+  <h5 class="text-center">Rover Details</h5>
+  <p>Name: ${details.name}</p>
+  <p>Launch Date: ${details.launch_date}</p>
+  <p>Landing Date: ${details.landing_date}</p>
+  <p>Status: ${details.status}</p>
+  <p>Last Photo Date: ${details.max_date}</p>
+  </div>
+
+  
     </div>`;
+
+  // The launch date, landing date, name and status along with any other information about the rover.
 };
 function handleSelectingRover() {
   const rover = document.getElementById("rover-select").value;
@@ -85,7 +100,7 @@ const Card = data => {
 
 // create content
 const App = state => {
-  let { rovers, apod, photoData } = state;
+  let { rovers, apod, photoData, roverDetails } = state;
   return `
         ${Navbar()}
         <header></header>
@@ -104,7 +119,7 @@ const App = state => {
                 ${ImageOfTheDay(apod)}
             </section>
             <section id="images">
-            ${Jumbotron(rovers)}
+            ${Jumbotron(rovers, roverDetails)}
             ${Photos(photoData)}
             </section>
 
@@ -115,7 +130,6 @@ const App = state => {
 
 // listening for load event because page should load before any JS is called
 window.addEventListener("load", () => {
-  console.log("--fetching data from api");
   getPhotoDataFromRover(store);
 });
 
@@ -154,10 +168,12 @@ const ImageOfTheDay = apod => {
             <p>${apod.explanation}</p>
         `;
   } else {
-    return `
+    return apod.image
+      ? `
             <img src="${apod.image.url}" height="350px" width="100%" class="img-fluid"/>
             <p>${apod.image.explanation}</p>
-        `;
+        `
+      : "";
   }
 };
 
@@ -175,5 +191,7 @@ const getImageOfTheDay = state => {
 function getPhotoDataFromRover(state) {
   fetch(`http://localhost:3000/rovers/${state.selectedRover}`)
     .then(res => res.json())
-    .then(data => updateStore(store, { photoData: data.image.photos }));
+    .then(data =>
+      updateStore(store, { photoData: data.photos, roverDetails: data.rover })
+    );
 }

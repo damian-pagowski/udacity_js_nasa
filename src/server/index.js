@@ -20,7 +20,10 @@ app.get("/rovers/:rover", async (req, res) => {
     const url = `https://api.nasa.gov/mars-photos/api/v1/rovers/${rover}/photos?sol=10&api_key=${process.env.API_KEY}`;
     console.log(url);
     let image = await fetch(url).then(res => res.json());
-    res.send({ image });
+    const data = {}   
+       data.photos = image.photos.map(photo => ({img_src : photo.img_src}))
+       data.rover = image.photos[0].rover
+    res.send(data);
   } catch (err) {
     console.log("error:", err);
   }
@@ -30,8 +33,8 @@ app.get("/apod", async (req, res) => {
   try {
     let image = await fetch(
       `https://api.nasa.gov/planetary/apod?api_key=${process.env.API_KEY}`
-    ).then(res => res.json());
-    res.send({ image });
+    ).then(res => 
+    res.send({ image }));
   } catch (err) {
     console.log("error:", err);
   }
