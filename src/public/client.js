@@ -94,13 +94,16 @@ const RoverDetails = state => {
           roverDetails[k]
         }</li>`
     )
-    .join("")}
+    .reduce((acc, curr) => (acc += curr))}
   </ul>
   </div>`;
 };
 const Photos = state => {
   const { photoData } = state;
-  const cards = photoData.map(each => Card(each)).join("");
+  const cards = photoData
+    .map(each => Card(each))
+    .reduce((acc, curr) => (acc += curr));
+
   return `<div class="container py-5">
       <div class="card-columns">
          ${cards}
