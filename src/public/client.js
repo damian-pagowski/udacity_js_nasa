@@ -76,17 +76,20 @@ const Navbar = () => {
     </div>
   </nav>`;
 };
-
+const capitalize = strng => strng.charAt(0).toUpperCase() + strng.slice(1);
+const removeSnakeCase = strng => strng.replace(/_/g, " ");
 const RoverDetails = details => {
-  return ` </div>
-    <div class="container">
-    <h5 class="text-center">Rover Details</h5>
-    <p>Name: ${details.name}</p>
-    <p>Launch Date: ${details.launch_date}</p>
-    <p>Landing Date: ${details.landing_date}</p>
-    <p>Status: ${details.status}</p>
-    <p>Last Photo Date: ${details.max_date}</p>
-    </div>`;
+  return ` <div class="container">
+  <h5 class="text-center">Rover Details</h5>
+  <ul class="list-group list-group-flush">
+  ${Object.keys(details)
+    .filter(k => typeof details[k] == "string")
+    .map(
+      k => `<li class="list-group-item"> ${capitalize(removeSnakeCase(k))}: ${details[k]}</li>`
+    )
+    .join("")}
+  </ul>
+  </div>`;
 };
 const Photos = data => {
   const cards = data.map(each => Card(each)).join("");
@@ -114,8 +117,8 @@ const App = state => {
         <main>
            
             <section>
-                <h3 class="text-center my-4">Astronomy Picture of the Day</h3>
-                <p>
+                <h1 class="display-4 text-center my-4">Astronomy Picture of the Day</h1>
+                <p class="mb-4">
                     One of the most popular websites at NASA is the Astronomy Picture of the Day. In fact, this website is one of
                     the most popular websites across all federal agencies. It has the popular appeal of a Justin Bieber video.
                     This endpoint structures the APOD imagery and associated metadata so that it can be repurposed for other

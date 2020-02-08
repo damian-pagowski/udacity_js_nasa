@@ -23,7 +23,7 @@ footer {
 /* -------------------  TABLET  --------------------- */
 @media (min-width: 768px) {
   .card-columns {
-    column-count: 2;
+    column-count: 3;
   }
 }
 
@@ -31,12 +31,12 @@ footer {
 
 @media (min-width: 1224px) {
   .card-columns {
-    column-count: 6 ;
+    column-count: 4 ;
   }
 /* -------------------  LARGE SCREENS  -------------- */
 
 @media (min-width: 1824px) {
   .card-columns {
-    column-count: 8;
+    column-count: 6;
   }
 }
