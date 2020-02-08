@@ -35,13 +35,15 @@ const Jumbotron = (roverSelect, roverDetails) => {
   // The launch date, landing date, name and status along with any other information about the rover.
 };
 
-const roverSelect = options => {
+const roverSelect = state => {
+  const { rovers } = state;
+
   return `           <select class="form-control" id="rover-select" onchange="handleSelectingRover()">
-    ${options
+    ${rovers
       .map(
         op =>
           `<option value="${op.toLowerCase()}" ${
-            store.selectedRover == op.toLowerCase() ? " selected" : ""
+            state.selectedRover == op.toLowerCase() ? " selected" : ""
           }>${op}</option>`
       )
       .join("")}
@@ -78,21 +80,27 @@ const Navbar = () => {
 };
 const capitalize = strng => strng.charAt(0).toUpperCase() + strng.slice(1);
 const removeSnakeCase = strng => strng.replace(/_/g, " ");
-const RoverDetails = details => {
+const RoverDetails = state => {
+  const { roverDetails } = state;
+
   return ` <div class="container">
   <h5 class="text-center">Rover Details</h5>
   <ul class="list-group list-group-flush">
-  ${Object.keys(details)
-    .filter(k => typeof details[k] == "string")
+  ${Object.keys(roverDetails)
+    .filter(k => typeof roverDetails[k] == "string")
     .map(
-      k => `<li class="list-group-item"> ${capitalize(removeSnakeCase(k))}: ${details[k]}</li>`
+      k =>
+        `<li class="list-group-item"> ${capitalize(removeSnakeCase(k))}: ${
+          roverDetails[k]
+        }</li>`
     )
     .join("")}
   </ul>
   </div>`;
 };
-const Photos = data => {
-  const cards = data.map(each => Card(each)).join("");
+const Photos = state => {
+  const { photoData } = state;
+  const cards = photoData.map(each => Card(each)).join("");
   return `<div class="container py-5">
       <div class="card-columns">
          ${cards}
@@ -110,7 +118,6 @@ const Card = data => {
 
 // create content
 const App = state => {
-  let { rovers, apod, photoData, roverDetails } = state;
   return `
         ${Navbar()}
         <header></header>
@@ -126,11 +133,11 @@ const App = state => {
                     explanation are returned. These keywords could be used as auto-generated hashtags for twitter or instagram feeds;
                     but generally help with discoverability of relevant imagery.
                 </p>
-                ${ImageOfTheDay(apod)}
+                ${ImageOfTheDay(state)}
             </section>
             <section id="images">
-            ${Jumbotron(roverSelect(rovers), RoverDetails(roverDetails))}
-            ${Photos(photoData)}
+            ${Jumbotron(roverSelect(state), RoverDetails(state))}
+            ${Photos(state)}
             </section>
 
         </main>
@@ -159,7 +166,9 @@ const Greeting = name => {
 };
 
 // Example of a pure function that renders infomation requested from the backend
-const ImageOfTheDay = apod => {
+const ImageOfTheDay = state => {
+  const { apod } = state;
+
   // If image does not already exist, or it is not from today -- request it again
   const today = new Date();
   const photodate = new Date(apod.date);
@@ -167,7 +176,7 @@ const ImageOfTheDay = apod => {
 
   console.log(photodate.getDate() === today.getDate());
   if (!apod || apod.date === today.getDate()) {
-    getImageOfTheDay(store);
+    getImageOfTheDay(state);
   }
 
   // check if the photo of the day is actually type video!
@@ -195,13 +204,13 @@ const getImageOfTheDay = state => {
 
   fetch(`http://localhost:3000/apod`)
     .then(res => res.json())
-    .then(apod => updateStore(store, { apod }));
+    .then(apod => updateStore(state, { apod }));
 };
 
 function getPhotoDataFromRover(state) {
   fetch(`http://localhost:3000/rovers/${state.selectedRover}`)
     .then(res => res.json())
     .then(data =>
-      updateStore(store, { photoData: data.photos, roverDetails: data.rover })
+      updateStore(state, { photoData: data.photos, roverDetails: data.rover })
     );
 }
