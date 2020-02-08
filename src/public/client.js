@@ -2,7 +2,7 @@ let store = {
   user: { name: "Student" },
   apod: "",
   rovers: ["Curiosity", "Opportunity", "Spirit"],
-  selectedRover: null,
+  selectedRover: "Curiosity",
   photoData: {},
 };
 
@@ -18,23 +18,31 @@ const render = async (root, state) => {
   root.innerHTML = App(state);
 };
 
-const Jumbotron = () => {
+const Jumbotron = options => {
   return `<div class="jumbotron jumbotron-fluid">
         <div class="container">
             <h1 class="display-4 text-center">Mars Rover Photos</h1>
             <p class="lead text-center">Select rover:</p>
             <div class="form-group">
-            <select class="form-control" id="exampleFormControlSelect1">
-              <option>1</option>
-              <option>2</option>
-              <option>3</option>
-              <option>4</option>
-              <option>5</option>
+            <select class="form-control" id="rover-select" onchange="handleSelectingRover()">
+${options
+  .map(
+    op =>
+      `<option value="${op.toLowerCase()}" ${
+        store.selectedRover == op.toLowerCase() ? " selected" : ""
+      }>${op}</option>`
+  )
+  .join("")}
             </select>
           </div>
         </div>
     </div>`;
 };
+function handleSelectingRover() {
+  const rover = document.getElementById("rover-select").value;
+  updateStore(store, { selectedRover: rover });
+  getPhotoDataFromRover(store);
+}
 
 const Navbar = () => {
   return `<nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -77,7 +85,7 @@ const Card = data => {
 
 // create content
 const App = state => {
-  let { rovers, apod } = state;
+  let { rovers, apod, photoData } = state;
   return `
         ${Navbar()}
         <header></header>
@@ -96,8 +104,8 @@ const App = state => {
                 ${ImageOfTheDay(apod)}
             </section>
             <section id="images">
-            ${Jumbotron()}
-            ${Photos(rovers)}
+            ${Jumbotron(rovers)}
+            ${Photos(photoData)}
             </section>
 
         </main>
@@ -108,13 +116,7 @@ const App = state => {
 // listening for load event because page should load before any JS is called
 window.addEventListener("load", () => {
   console.log("--fetching data from api");
-  fetch(`http://localhost:3000/rovers/curiosity`)
-    .then(res => res.json())
-    .then(data => {
-      console.log(data.image.photos);
-      updateStore(store, { rovers: data.image.photos });
-      render(root, store);
-    });
+  getPhotoDataFromRover(store);
 });
 
 // ------------------------------------------------------  COMPONENTS
@@ -168,6 +170,10 @@ const getImageOfTheDay = state => {
   fetch(`http://localhost:3000/apod`)
     .then(res => res.json())
     .then(apod => updateStore(store, { apod }));
-
-  return data;
 };
+
+function getPhotoDataFromRover(state) {
+  fetch(`http://localhost:3000/rovers/${state.selectedRover}`)
+    .then(res => res.json())
+    .then(data => updateStore(store, { photoData: data.image.photos }));
+}
